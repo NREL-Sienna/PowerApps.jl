@@ -10,6 +10,7 @@ $ git clone https://github.com/NREL-SIIP/PowerSystemManager.jl
 $ cd PowerSystemManager.jl
 $ julia --project
 julia> ]instantiate
+```
 
 ### PowerSystemViewer
 
