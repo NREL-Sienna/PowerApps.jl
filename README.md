@@ -22,7 +22,7 @@ $ julia src/app.jl
  Info: Listening on: 0.0.0.0:8050
 ```
 
-Open your browser to the IP address and port listed. In this case: `http:0.0.0.0:8050`.
+Open your browser to the IP address and port listed. In this case: `http://0.0.0.0:8050`.
 
 Next, enter a path to a raw data file or serialized JSON and load the system. Afterwards,
 you can sort and filter component data.
