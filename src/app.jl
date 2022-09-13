@@ -4,49 +4,33 @@ using PowerSystemManager
 
 include("component_tables.jl")
 
-mutable struct Inputs
-    system_path::Union{Nothing, String}
-    system::Union{Nothing, System}
-    default_units::Union{Nothing, String}
-    component_types::Union{Nothing, Vector}
-    component_type_options::Union{Nothing, Vector}
-end
+const DEFAULT_UNITS = "unknown"
 
-function Inputs()
-    return Inputs(nothing, nothing, nothing, nothing, nothing)
-end
+system = nothing
 
-inputs = Inputs()
-inputs.default_units = "unknown"
-inputs.component_types = []
-inputs.component_type_options = []
-
-function load_system()
-    isnothing(inputs.system_path) && error("why is path nothing")
-    inputs.system = System(inputs.system_path)
-    inputs.default_units = get_units_base(inputs.system)
-    inputs.component_types =
-        [string(nameof(x)) for x in get_existing_component_types(inputs.system)]
-    sort!(inputs.component_types)
-    inputs.component_type_options =
-        [Dict("label" => x, "value" => x) for x in inputs.component_types]
-end
-
-function get_component_table(component_type)
+function get_component_table(sys, component_type)
     return make_component_table(
         getproperty(PowerSystems, Symbol(component_type)),
-        inputs.system,
+        sys,
     )
 end
 
-function get_default_component_type()
-    isnothing(inputs.system) && return ""
-    return string(nameof(typeof(first(get_components(Generator, inputs.system)))))
+function get_default_component_type(sys)
+    return string(nameof(typeof(first(get_components(Generator, sys)))))
 end
 
-function make_datatable(component_type)
-    isnothing(inputs.system) && return
-    table = get_component_table(component_type)
+function get_component_type_options(sys)
+    component_types = [string(nameof(x)) for x in get_existing_component_types(sys)]
+    sort!(component_types)
+    return [Dict("label" => x, "value" => x) for x in component_types]
+end
+
+function get_system_units(sys)
+    return lowercase(get_units_base(sys))
+end
+
+function make_datatable(sys, component_type)
+    table = get_component_table(sys, component_type)
     columns = []
     for (name, val) in first(table)
         if val isa AbstractString
@@ -84,7 +68,7 @@ app.layout = html_div() do
         "Enter the path of a system file: ",
         dcc_input(
             id = "system_text",
-            value = inputs.system_path,
+            value = "",
             type = "text",
             style = Dict("width" => "25%"),
         ),
@@ -126,12 +110,12 @@ app.layout = html_div() do
         dcc_radioitems(
             id = "units_radio",
             options = [
-                (label = "unknown", value = "unknown"),
+                (label = DEFAULT_UNITS, value = DEFAULT_UNITS, disabled = true),
                 (label = "device_base", value = "device_base"),
                 (label = "natural_units", value = "natural_units"),
                 (label = "system_base", value = "system_base"),
             ],
-            value = "unknown",
+            value = DEFAULT_UNITS,
         ),
         html_div(id = "units_radio_output"),
     ],),
@@ -140,8 +124,8 @@ app.layout = html_div() do
         "Select a component type: ",
         dcc_radioitems(
             id = "component_type_dd",
-            options = inputs.component_type_options,
-            value = get_default_component_type(),
+            options = [],
+            value = "",
         ),
         html_div(id = "component_type_dd_output"),
     ]),
@@ -161,17 +145,15 @@ callback!(
     State("system_text", "value"),
     State("load_description", "value"),
 ) do loading_system, n_clicks, system_path, load_description
-    n_clicks <= 0 && return loading_system, "Loaded system: None", "unknown", []
-    if system_path != inputs.system_path
-        inputs.system_path = system_path
-        load_system()
-    end
+    global system
+    n_clicks <= 0 && return loading_system, "Loaded system: None", DEFAULT_UNITS, []
+        system = System(system_path)
 
     return (
         loading_system,
-        "Loaded system: $system_path\n$(summary(inputs.system))",
-        get_units_base(inputs.system),
-        inputs.component_type_options,
+        "Loaded system: $system_path\n$(summary(system))",
+        get_system_units(system),
+        get_component_type_options(system),
     )
 end
 
@@ -180,7 +162,8 @@ callback!(
     Output("component_type_dd", "value"),
     Input("component_type_dd", "options"),
 ) do available_options
-    return get_default_component_type()
+    isnothing(system) && return ""
+    return get_default_component_type(system)
 end
 
 callback!(
@@ -189,13 +172,16 @@ callback!(
     Input("units_radio", "value"),
     Input("component_type_dd", "value"),
 ) do units, component_type
-    isnothing(inputs.system) && return
-    units == "unknown" && return
-    if get_units_base(inputs.system) != units
-        set_units_base_system!(inputs.system, units)
+    isnothing(system) && return
+    @assert units != DEFAULT_UNITS
+    if get_system_units(system) != units
+        set_units_base_system!(system, units)
     end
-    make_datatable(component_type)
+    make_datatable(system, component_type)
 end
 
-run_server(app, "0.0.0.0")
-# run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
+if !isnothing(get(ENV, "PSY_VIEWER_DEBUG", nothing))
+    run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
+else
+    run_server(app, "0.0.0.0")
+end
