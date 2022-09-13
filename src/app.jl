@@ -9,10 +9,7 @@ const DEFAULT_UNITS = "unknown"
 system = nothing
 
 function get_component_table(sys, component_type)
-    return make_component_table(
-        getproperty(PowerSystems, Symbol(component_type)),
-        sys,
-    )
+    return make_component_table(getproperty(PowerSystems, Symbol(component_type)), sys)
 end
 
 function get_default_component_type(sys)
@@ -43,20 +40,23 @@ function make_datatable(sys, component_type)
         push!(columns, Dict("name" => name, "id" => name, "type" => type))
     end
 
-    return dash_datatable(
-        columns = columns,
-        data = table,
-        editable = true,
-        filter_action = "native",
-        sort_action = "native",
-        style_table = Dict("height" => 400),
-        style_data = Dict(
-            "width" => "100px",
-            "minWidth" => "100px",
-            "maxWidth" => "100px",
-            "overflow" => "hidden",
-            "textOverflow" => "ellipsis",
+    return (
+        dash_datatable(
+            columns = columns,
+            data = table,
+            editable = true,
+            filter_action = "native",
+            sort_action = "native",
+            style_table = Dict("height" => 400),
+            style_data = Dict(
+                "width" => "100px",
+                "minWidth" => "100px",
+                "maxWidth" => "100px",
+                "overflow" => "hidden",
+                "textOverflow" => "ellipsis",
+            ),
         ),
+        length(table),
     )
 end
 
@@ -122,12 +122,13 @@ app.layout = html_div() do
     html_br(),
     html_div([
         "Select a component type: ",
-        dcc_radioitems(
-            id = "component_type_dd",
-            options = [],
-            value = "",
-        ),
+        dcc_radioitems(id = "component_type_dd", options = [], value = ""),
         html_div(id = "component_type_dd_output"),
+    ]),
+    html_div([
+        "Number of components: ",
+        dcc_input(id = "num_components_text", value = "0", type = "text", readOnly = true),
+        html_div(id = "num_components_text_output"),
     ]),
     html_br(),
     html_h3("Components Table"),
@@ -147,7 +148,7 @@ callback!(
 ) do loading_system, n_clicks, system_path, load_description
     global system
     n_clicks <= 0 && return loading_system, "Loaded system: None", DEFAULT_UNITS, []
-        system = System(system_path)
+    system = System(system_path)
 
     return (
         loading_system,
@@ -169,15 +170,17 @@ end
 callback!(
     app,
     Output("component_table_output", "children"),
+    Output("num_components_text", "value"),
     Input("units_radio", "value"),
     Input("component_type_dd", "value"),
 ) do units, component_type
-    isnothing(system) && return
+    isnothing(system) && return nothing, "0"
     @assert units != DEFAULT_UNITS
     if get_system_units(system) != units
         set_units_base_system!(system, units)
     end
-    make_datatable(system, component_type)
+    table, count = make_datatable(system, component_type)
+    return table, string(count)
 end
 
 if !isnothing(get(ENV, "PSY_VIEWER_DEBUG", nothing))
