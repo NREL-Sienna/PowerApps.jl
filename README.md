@@ -31,10 +31,18 @@ you can sort and filter component data.
 
 Consult https://dash.plotly.com/julia for help extending the UI.
 
-Change the `run_server` call in `src/app.jl` to enable hot-reloading of the UI.
+Set the environment variable `PSY_VIEWER_DEBUG` to enable hot-reloading of the UI.
 
+Mac or Linux
 ```
-run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
+$ export PSY_VIEWER_DEBUG=1
+# or
+$ PSY_VIEWER_DEBUG=1 julia --project src/app.jl
+```
+
+Windows PowerShell
+```
+$Env:PSY_VIEWER_DEBUG = "1"
 ```
 
 ## License
