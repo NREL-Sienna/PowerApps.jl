@@ -18,7 +18,7 @@ This application allows users to browse PowerSystems components and time series 
 via Plotly Dash. Here's how to start it:
 
 ```
-$ julia src/app.jl
+$ julia --project src/system_viewer_app.jl
  Info: Listening on: 0.0.0.0:8050
 ```
 
@@ -27,22 +27,25 @@ Open your browser to the IP address and port listed. In this case: `http://0.0.0
 Next, enter a path to a raw data file or serialized JSON and load the system. Afterwards,
 you can sort and filter component data.
 
+Once you select one or more components you can select the `Components` tab and then plot
+time series data.
+
 ## Developers
 
 Consult https://dash.plotly.com/julia for help extending the UI.
 
-Set the environment variable `PSY_VIEWER_DEBUG` to enable hot-reloading of the UI.
+Set the environment variable `SIIP_DEBUG` to enable hot-reloading of the UI.
 
 Mac or Linux
 ```
-$ export PSY_VIEWER_DEBUG=1
+$ export SIIP_DEBUG=1
 # or
-$ PSY_VIEWER_DEBUG=1 julia --project src/app.jl
+$ SIIP_DEBUG=1 julia --project src/system_viewer_app.jl
 ```
 
 Windows PowerShell
 ```
-$Env:PSY_VIEWER_DEBUG = "1"
+$Env:SIIP_DEBUG = "1"
 ```
 
 ## License
