@@ -332,7 +332,14 @@ callback!(
     Input("sts_datatable", "derived_viewport_data"),
     State("selected_component_type", "value"),
 ) do n_clicks, row_indexes, row_data, component_type
-    n_clicks < 1 && throw(PreventUpdate())
+    ctx = callback_context()
+    if n_clicks < 1 ||
+       length(ctx.triggered) == 0 ||
+       ctx.triggered[1].prop_id != "plot_sts_button.n_clicks" ||
+       isnothing(row_indexes) ||
+       isempty(row_indexes)
+        throw(PreventUpdate())
+    end
     traces = []
     for i in row_indexes
         row_index = i + 1  # julia is 1-based
