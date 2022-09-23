@@ -16,7 +16,7 @@ include("utils.jl")
 include("component_tables.jl")
 
 mutable struct SystemData
-    system::Union{Nothing, System}
+    system::Union{Nothing,System}
 end
 
 SystemData() = SystemData(nothing)
@@ -45,16 +45,16 @@ function make_datatable(sys, component_type)
     columns = make_table_columns(components)
     return (
         dash_datatable(
-            id="components_datatable",
-            columns=columns,
-            data=components,
-            editable=false,
-            filter_action="native",
-            sort_action="native",
-            row_selectable="multi",
-            selected_rows=[],
-            style_table=Dict("height" => 400),
-            style_data=Dict(
+            id = "components_datatable",
+            columns = columns,
+            data = components,
+            editable = false,
+            filter_action = "native",
+            sort_action = "native",
+            row_selectable = "multi",
+            selected_rows = [],
+            style_table = Dict("height" => 400),
+            style_data = Dict(
                 "width" => "100px",
                 "minWidth" => "100px",
                 "maxWidth" => "100px",
@@ -67,96 +67,227 @@ function make_datatable(sys, component_type)
 end
 
 system_tab = dcc_tab(
-    label="System",
-    children=[
-        html_h1("System View"),
-        html_div([
-            "Enter the path of a system file: ",
-            dcc_input(
-                id="system_text",
-                value="",
-                type="text",
-                style=Dict("width" => "25%"),
-            ),
-            html_button("Load system", id="load_button", n_clicks=0),
-        ],),
-        html_div([
-            "Loaded system: ",
-            dcc_textarea(
-                readOnly=true,
-                value="None",
-                style=Dict("width" => "25%", "height" => 40),
-                id="load_description",
-            ),
-        ]),
-        html_div([
-            dcc_loading(
-                id="loading_system",
-                type="default",
-                children=[html_div(id="loading_system_output")],
-            ),
-        ]),
-        html_br(),
-        html_div([
-            "Select units base: ",
-            dcc_radioitems(
-                id="units_radio",
-                options=[
-                    (label=DEFAULT_UNITS, value=DEFAULT_UNITS, disabled=true),
-                    (label="device_base", value="device_base"),
-                    (label="natural_units", value="natural_units"),
-                    (label="system_base", value="system_base"),
-                ],
-                value=DEFAULT_UNITS,
-            ),
-        ],),
-        html_br(),
-        html_div([
-            "Select a component type: ",
-            dcc_radioitems(id="component_type_radio", options=[], value=""),
-        ]),
-        html_div([
-            "Number of components: ",
-            dcc_input(id="num_components_text", value="0", type="text", readOnly=true),
-        ]),
+    label = "System",
+    children = [
+        html_div(
+            [
+                html_div(
+                    [
+                        html_br(),
+                        html_h1("System View"),
+                        html_div([
+                            dcc_input(
+                                id = "system_text",
+                                value = "Enter the path of a system file",
+                                type = "text",
+                                style = Dict("width" => "50%"),
+                            ),
+                            html_button(
+                                "Load system",
+                                id = "load_button",
+                                n_clicks = 0,
+                                style = Dict("margin-left" => "10px"),
+                            ),
+                        ]),
+                        html_br(),
+                        html_div([
+                            html_div(
+                                [
+                                    html_div(
+                                        [
+                                            html_h5("Loaded system"),
+                                            dcc_textarea(
+                                                readOnly = true,
+                                                value = "None",
+                                                style = Dict(
+                                                    "width" => "100%",
+                                                    "height" => 100,
+                                                    "margin-left" => "3%",
+                                                ),
+                                                id = "load_description",
+                                            ),
+                                        ],
+                                        className = "column",
+                                    ),
+                                    html_div(
+                                        [
+                                            html_h5("Select units base"),
+                                            dcc_radioitems(
+                                                id = "units_radio",
+                                                options = [
+                                                    (
+                                                        label = DEFAULT_UNITS,
+                                                        value = DEFAULT_UNITS,
+                                                        disabled = true,
+                                                    ),
+                                                    (
+                                                        label = "device_base",
+                                                        value = "device_base",
+                                                    ),
+                                                    (
+                                                        label = "natural_units",
+                                                        value = "natural_units",
+                                                    ),
+                                                    (
+                                                        label = "system_base",
+                                                        value = "system_base",
+                                                    ),
+                                                ],
+                                                value = DEFAULT_UNITS,
+                                                style = Dict("margin-left" => "3%"),
+                                            ),
+                                        ],
+                                        className = "column",
+                                    ),
+                                ],
+                                className = "row",
+                            ),
+                        ]),
+                        html_div([
+                            dcc_loading(
+                                id = "loading_system",
+                                type = "default",
+                                children = [html_div(id = "loading_system_output")],
+                            ),
+                        ]),
+                        html_br(),
+                        html_div(
+                            [
+                                html_div(
+                                    [
+                                        html_h5("Selet a component type"),
+                                        dcc_radioitems(
+                                            id = "component_type_radio",
+                                            options = [],
+                                            value = "",
+                                            style = Dict("margin-left" => "3%"),
+                                        ),
+                                    ],
+                                    className = "column",
+                                ),
+                                html_div(
+                                    [
+                                        html_h5("Number of components: "),
+                                        dcc_input(
+                                            id = "num_components_text",
+                                            value = "0",
+                                            type = "text",
+                                            readOnly = true,
+                                            style = Dict("margin-left" => "3%"),
+                                        ),
+                                    ],
+                                    className = "column",
+                                ),
+                            ],
+                            className = "row",
+                        ),
+                    ],
+                    className = "column",
+                ),
+                html_div(
+                    [
+                        html_div([
+                            html_br(),
+                            html_img(src = "assets/logo.png", height = "250"),
+                        ],),
+                        html_div([
+                            html_button(
+                                dcc_link(
+                                    children = ["PowerSystems.jl Docs"],
+                                    href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
+                                    target = "PowerSystems.jl Docs",
+                                ),
+                                id = "docs_button",
+                                n_clicks = 0,
+                                style = Dict("margin-top" => "10px"),
+                            ),
+                        ]),
+                    ],
+                    className = "column",
+                    style = Dict("textAlign" => "center"),
+                ),
+            ],
+            className = "row",
+        ),
         html_br(),
         # TODO: delay displaying this table until the system is loaded
         html_h3("Components Table"),
-        html_div([
-            dash_datatable(id="components_datatable"),
-            html_div(id="components_datatable_container"),
-        ]),
+        html_div(
+            [
+                dash_datatable(id = "components_datatable"),
+                html_div(id = "components_datatable_container"),
+            ],
+            style = Dict("color" => "black"),
+        ),
     ],
 )
 
 component_tab = dcc_tab(
-    label="Time Series",
-    children=[
-        html_h1("Time Series View"),
-        html_div([
-            "Selected component type: ",
-            dcc_input(
-                readOnly=true,
-                value="None",
-                id="selected_component_type",
-                style=Dict("width" => "25%"),
-            ),
-        ]),
+    label = "Time Series",
+    children = [
+        html_div(
+            [
+                html_div(
+                    [
+                        html_h1("Time Series View"),
+                        html_h4("Selected component type:"),
+                        html_div([
+                            dcc_input(
+                                readOnly = true,
+                                value = "None",
+                                id = "selected_component_type",
+                                style = Dict("width" => "30%", "margin-left" => "3%"),
+                            ),
+                        ],),
+                    ],
+                    className = "column",
+                ),
+                html_div(
+                    [
+                        html_div([
+                            html_br(),
+                            html_img(src = "assets/logo.png", height = "75"),
+                        ],),
+                        html_div([
+                            html_button(
+                                dcc_link(
+                                    children = ["PowerSystems.jl Docs"],
+                                    href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
+                                    target = "PowerSystems.jl Docs",
+                                ),
+                                id = "another_docs_button",
+                                n_clicks = 0,
+                                style = Dict("margin-top" => "10px"),
+                            ),
+                        ]),
+                    ],
+                    className = "column",
+                    style = Dict("textAlign" => "center"),
+                ),
+            ],
+            className = "row",
+        ),
         html_br(),
         html_div([
-            "Select time series: ",
-            html_div([
-                dash_datatable(id="sts_datatable"),
-                html_div(id="sts_datatable_container"),
-            ]),
+            html_h4("Select time series:"),
+            html_div(
+                [
+                    dash_datatable(id = "sts_datatable"),
+                    html_div(id = "sts_datatable_container"),
+                ],
+                style = Dict("color" => "black"),
+            ),
             html_br(),
-            html_button("Plot SingleTimeSeries", id="plot_sts_button", n_clicks=0),
+            html_button("Plot SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
             html_hr(),
-            html_div([
-                dash_datatable(id="deterministic_datatable"),
-                html_div(id="deterministic_datatable_container"),
-            ],),
-            dcc_graph(id="sts_plot"),
+            html_div(
+                [
+                    dash_datatable(id = "deterministic_datatable"),
+                    html_div(id = "deterministic_datatable_container"),
+                ],
+                style = Dict("color" => "black"),
+            ),
+            dcc_graph(id = "sts_plot"),
         ]),
     ],
 )
@@ -170,10 +301,23 @@ get_system() = get_system(g_data)
 app = dash()
 app.layout = html_div() do
     html_div([
-        dcc_tabs([
-            dcc_tab(label="System", children=[system_tab]),
-            dcc_tab(label="Time Series", children=[component_tab]),
-        ]),
+        dcc_tabs(
+            [
+                dcc_tab(
+                    label = "System",
+                    children = [system_tab],
+                    className = "custom-tab",
+                    selected_className = "custom-tab--selected",
+                ),
+                dcc_tab(
+                    label = "Time Series",
+                    children = [component_tab],
+                    className = "custom-tab",
+                    selected_className = "custom-tab--selected",
+                ),
+            ],
+            parent_className = "custom-tabs",
+        ),
     ])
 end
 
@@ -189,7 +333,7 @@ callback!(
     State("load_description", "value"),
 ) do loading_system, n_clicks, system_path, load_description
     n_clicks <= 0 && throw(PreventUpdate())
-    system = System(system_path, time_series_read_only=true)
+    system = System(system_path, time_series_read_only = true)
     g_data.system = system
     return (
         loading_system,
@@ -285,7 +429,7 @@ callback!(
                     )
                 end
             end
-            sort!(static_time_series, by=x -> x["name"])
+            sort!(static_time_series, by = x -> x["name"])
         end
     end
 
@@ -298,27 +442,27 @@ callback!(
         "textOverflow" => "ellipsis",
     )
     sts_table = dash_datatable(
-        id="sts_datatable",
-        columns=sts_columns,
-        data=static_time_series,
-        editable=false,
-        filter_action="native",
-        sort_action="native",
-        row_selectable=isempty(static_time_series) ? nothing : "multi",
-        selected_rows=[],
-        style_data=style_data,
+        id = "sts_datatable",
+        columns = sts_columns,
+        data = static_time_series,
+        editable = false,
+        filter_action = "native",
+        sort_action = "native",
+        row_selectable = isempty(static_time_series) ? nothing : "multi",
+        selected_rows = [],
+        style_data = style_data,
     )
     deterministic_columns = make_table_columns(deterministic_time_series)
     deterministic_table = dash_datatable(
-        id="deterministic_datatable",
-        columns=deterministic_columns,
-        data=deterministic_time_series,
-        editable=false,
-        filter_action="native",
-        sort_action="native",
-        row_selectable=isempty(deterministic_time_series) ? nothing : "multi",
-        selected_rows=[],
-        style_data=style_data,
+        id = "deterministic_datatable",
+        columns = deterministic_columns,
+        data = deterministic_time_series,
+        editable = false,
+        filter_action = "native",
+        sort_action = "native",
+        row_selectable = isempty(deterministic_time_series) ? nothing : "multi",
+        selected_rows = [],
+        style_data = style_data,
     )
 
     return component_type, sts_table, deterministic_table
@@ -344,23 +488,23 @@ callback!(
         component = get_component(c_type, get_system(), c_name)
         ta = get_time_series_array(ts_type, component, ts_name)
         trace = scatter(;
-            x=TimeSeries.timestamp(ta),
-            y=TimeSeries.values(ta),
-            mode="lines+markers",
-            name=c_name,
+            x = TimeSeries.timestamp(ta),
+            y = TimeSeries.values(ta),
+            mode = "lines+markers",
+            name = c_name,
         )
         push!(traces, trace)
     end
     layout = Layout(;
-        title="$component_type SingleTimeSeries",
-        xaxis_title="Time",
-        yaxis_title="val",
+        title = "$component_type SingleTimeSeries",
+        xaxis_title = "Time",
+        yaxis_title = "val",
     )
     return plot([x for x in traces], layout)
 end
 
 if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
-    run_server(app, "0.0.0.0", debug=true, dev_tools_hot_reload=true)
+    run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
 else
     run_server(app, "0.0.0.0")
 end

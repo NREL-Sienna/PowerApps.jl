@@ -2,12 +2,12 @@ const MAX_CONCURRENT_SESSIONS = 10
 
 struct Store{T}
     lock::ReentrantLock
-    sessions::Dict{String, Session{T}}
+    sessions::Dict{String,Session{T}}
     max_concurrent_sessions::Int
 end
 
-function Store{T}(max_concurrent_sessions=MAX_CONCURRENT_SESSIONS) where {T}
-    return Store(ReentrantLock(), Dict{String, Session{T}}(), max_concurrent_sessions)
+function Store{T}(max_concurrent_sessions = MAX_CONCURRENT_SESSIONS) where {T}
+    return Store(ReentrantLock(), Dict{String,Session{T}}(), max_concurrent_sessions)
 end
 
 function add_session!(store::Store, session::Session)

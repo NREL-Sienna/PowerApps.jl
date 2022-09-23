@@ -6,25 +6,25 @@ using DataStructures
 function make_component_table(
     ::Type{T},
     sys::System;
-    sort_column="name",
-) where {T <: PowerSystems.Component}
-    return _make_component_table(get_components(T, sys); sort_column=sort_column)
+    sort_column = "name",
+) where {T<:PowerSystems.Component}
+    return _make_component_table(get_components(T, sys); sort_column = sort_column)
 end
 
 function make_component_table(
     filter_func::Function,
     ::Type{T},
     sys::System;
-    sort_column="name",
-) where {T <: PowerSystems.Component}
+    sort_column = "name",
+) where {T<:PowerSystems.Component}
     return _make_component_table(
         get_components(filter_func, T, sys);
-        sort_column=sort_column,
+        sort_column = sort_column,
     )
 end
 
-function _make_component_table(components; sort_column="name")
-    table = Vector{DataStructures.OrderedDict{String, Any}}()
+function _make_component_table(components; sort_column = "name")
+    table = Vector{DataStructures.OrderedDict{String,Any}}()
     for component in components
         push!(table, get_component_table_values(component))
     end
@@ -34,14 +34,14 @@ function _make_component_table(components; sort_column="name")
         if !in(sort_column, keys(table[1]))
             throw(ArgumentError("$sort_column is not a column in the table"))
         end
-        sort!(table, by=x -> x[sort_column])
+        sort!(table, by = x -> x[sort_column])
     end
 
     return table
 end
 
 function get_component_table_values(component::PowerSystems.Component)
-    vals = DataStructures.OrderedDict{String, Any}("name" => get_name(component))
+    vals = DataStructures.OrderedDict{String,Any}("name" => get_name(component))
     t = typeof(component)
     for (name, type) in zip(fieldnames(t), fieldtypes(t))
         if type <: AbstractString || type <: Number || type <: Bool
@@ -54,7 +54,7 @@ function get_component_table_values(component::PowerSystems.Component)
 end
 
 function get_component_table_values(component::Bus)
-    return DataStructures.OrderedDict{String, Any}(
+    return DataStructures.OrderedDict{String,Any}(
         "name" => get_name(component),
         "number" => get_number(component),
         "bustype" => string(get_bustype(component)),
@@ -67,7 +67,7 @@ function get_component_table_values(component::Bus)
 end
 
 function get_component_table_values(component::ThermalStandard)
-    data = DataStructures.OrderedDict{String, Any}(
+    data = DataStructures.OrderedDict{String,Any}(
         "name" => get_name(component),
         "available" => get_available(component),
         "prime_mover" => string(get_prime_mover(component)),
