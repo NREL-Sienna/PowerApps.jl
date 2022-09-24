@@ -73,6 +73,7 @@ function get_component_table_values(component::ThermalStandard)
         "prime_mover" => string(get_prime_mover(component)),
         "fuel" => string(get_fuel(component)),
         "bus" => get_name(get_bus(component)),
+        "area" => get_name(get_area(get_bus(component))),
         "base_power" => get_base_power(component),
         "rating" => get_rating(component),
         "active_power" => get_active_power(component),

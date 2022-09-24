@@ -301,24 +301,45 @@ get_system() = get_system(g_data)
 app = dash()
 app.layout = html_div() do
     html_div([
-        dcc_tabs(
-            [
-                dcc_tab(
-                    label = "System",
-                    children = [system_tab],
-                    className = "custom-tab",
-                    selected_className = "custom-tab--selected",
+        html_div(
+            id = "app-page-header",
+            children = [
+                html_a(
+                    id = "dashbio-logo",
+                    children = [html_img(src = "assets/NREL-logo-green-tag.png")],
                 ),
-                dcc_tab(
-                    label = "Time Series",
-                    children = [component_tab],
-                    className = "custom-tab",
-                    selected_className = "custom-tab--selected",
+                html_h2("PowerSystemManager.jl"),
+                html_a(
+                    id = "gh-link",
+                    children = ["View on GitHub"],
+                    href = "https://github.com/NREL-SIIP/PowerSystemManager.jl",
+                    style = Dict("color" => "#d6d6d6", "border" => "solid 1px #d6d6d6"),
                 ),
+                html_img(src = "assets/GitHub-Mark-Light-64px.png  "),
             ],
-            parent_className = "custom-tabs",
+            className = "app-page-header",
         ),
+        html_div([
+            dcc_tabs(
+                [
+                    dcc_tab(
+                        label = "System",
+                        children = [system_tab],
+                        className = "custom-tab",
+                        selected_className = "custom-tab--selected",
+                    ),
+                    dcc_tab(
+                        label = "Time Series",
+                        children = [component_tab],
+                        className = "custom-tab",
+                        selected_className = "custom-tab--selected",
+                    ),
+                ],
+                parent_className = "custom-tabs",
+            ),
+        ]),
     ])
+
 end
 
 callback!(
