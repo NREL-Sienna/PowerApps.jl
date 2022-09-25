@@ -6,6 +6,9 @@ using DataFrames
 using PlotlyJS
 import InfrastructureSystems
 using PowerSystems
+using PowerSystemsMaps
+using Plots
+plotlyjs(size = (NaN, NaN))
 using PowerSystemManager
 
 const IS = InfrastructureSystems
@@ -292,6 +295,68 @@ component_tab = dcc_tab(
     ],
 )
 
+map_tab = dcc_tab(
+    label = "Maps",
+    children = [
+        html_div(
+            [
+                html_div(
+                    [
+                        html_h1("Map View"),
+                        html_div([
+                            dcc_input(
+                                id = "shp_text",
+                                value = "Enter the path of a shp file (optional)",
+                                type = "text",
+                                style = Dict("width" => "50%"),
+                            ),
+                            html_button(
+                                "Load Shapefile",
+                                id = "load_shp_button",
+                                n_clicks = 0,
+                                style = Dict("margin-left" => "10px"),
+                            ),
+                        ]),
+                        html_br(),
+                        html_button("Plot map", id = "plot_map_button", n_clicks = 0),
+                    ],
+                    className = "column",
+                ),
+                html_div(
+                    [
+                        html_div([
+                            html_br(),
+                            html_img(src = "assets/logo.png", height = "75"),
+                        ],),
+                        html_div([
+                            html_button(
+                                dcc_link(
+                                    children = ["PowerSystemsMaps.jl"],
+                                    href = "https://github.com/nrel-siip/powersystemsmaps.jl",
+                                    target = "PowerSystemsMaps.jl",
+                                ),
+                                id = "maps_docs_button",
+                                n_clicks = 0,
+                                style = Dict("margin-top" => "10px"),
+                            ),
+                        ]),
+                    ],
+                    className = "column",
+                    style = Dict("textAlign" => "center"),
+                ),
+            ],
+            className = "row",
+        ),
+        html_div([
+            html_hr(),
+            dcc_graph(
+                id = "map_plot",
+                style = Dict("textAlign" => "center", "height" => "75vh"),
+            ),
+        ]),
+    ],
+)
+
 # Note: This is only setup to support one worker. We would need to implement a backend
 # process that manages a store and provides responses to each Dash worker. The code in this
 # file would not be able to use any PSY functionality. There would have to be API calls
@@ -331,6 +396,12 @@ app.layout = html_div() do
                     dcc_tab(
                         label = "Time Series",
                         children = [component_tab],
+                        className = "custom-tab",
+                        selected_className = "custom-tab--selected",
+                    ),
+                    dcc_tab(
+                        label = "Map",
+                        children = [map_tab],
                         className = "custom-tab",
                         selected_className = "custom-tab--selected",
                     ),
@@ -521,7 +592,88 @@ callback!(
         xaxis_title = "Time",
         yaxis_title = "val",
     )
-    return plot([x for x in traces], layout)
+    return PlotlyJS.plot([x for x in traces], layout)
+end
+
+function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
+    plt[:overwrite_figure] && closeall()
+    plt.o = PlotlyJS.plot()
+    traces = PlotlyJS.GenericTrace[]
+    for series_dict in Plots.plotly_series(plt)
+        filter!(p -> !(isa(last(p), Number) && isnan(last(p))), series_dict)
+        plotly_type = pop!(series_dict, :type)
+        series_dict[:transpose] = false
+        push!(traces, PlotlyJS.GenericTrace(plotly_type; series_dict...))
+    end
+    PlotlyJS.addtraces!(plt.o, traces...)
+    layout = Dict([
+        p for p in Plots.plotly_layout(plt) if first(p) ∉ [:xaxis, :yaxis, :height, :width]
+    ])
+    layout[:xaxis_visible] = false
+    layout[:yaxis_visible] = false
+    PlotlyJS.relayout!(plt.o, layout)
+    return plt.o
+end
+
+callback!(
+    app,
+    Output("map_plot", "figure"),
+    Input("plot_map_button", "n_clicks"),
+    Input("load_shp_button", "n_clicks"),
+    State("shp_text", "value"),
+) do n_clicks, n_shp_clicks, shp_txt
+    n_clicks < 1 && throw(PreventUpdate())
+
+    if n_shp_clicks > 0
+        shp_path = shp_txt
+    else
+        shp_path = joinpath(
+            pkgdir(PowerSystemManager),
+            "src",
+            "assets",
+            "world-administrative-boundaries",
+            "world-administrative-boundaries.shp",
+        )
+    end
+
+    if endswith(shp_path, ".shp")
+        # load a shapefile
+        shp = PowerSystemsMaps.Shapefile.shapes(PowerSystemsMaps.Shapefile.Table(shp_path))
+        shp = PowerSystemsMaps.lonlat_to_webmercator(shp) #adjust coordinates
+
+        # plot a map from shapefile
+        p = Plots.plot(
+            shp,
+            fillcolor = "grey",
+            background_color = "#1E1E1E",
+            linecolor = "darkgrey",
+            axis = nothing,
+            grid = false,
+            border = :none,
+            label = "",
+            legend_font_color = :red,
+        )
+    else
+        p = Plots.plot(background_color = "black", axis = nothing, border = :none)
+    end
+
+    if !isnothing(get_system())
+        system = get_system()
+        g = make_graph(system, K = 0.01)
+        p = plot_net!(
+            p,
+            g,
+            nodesize = 3.0,
+            linecolor = "blue",
+            linewidth = 1.0,
+            lines = true,
+            #nodecolor = "red",
+            nodealpha = 1.0,
+            shownodelegend = true,
+        )
+    end
+    plotlyjs_syncplot(p)
+    Plots.backend_object(p)
 end
 
 if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
