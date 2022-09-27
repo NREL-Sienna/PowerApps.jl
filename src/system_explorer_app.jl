@@ -86,7 +86,7 @@ system_tab = dcc_tab(
                                 style = Dict("width" => "50%"),
                             ),
                             html_button(
-                                "LOAD System",
+                                "Load System",
                                 id = "load_button",
                                 n_clicks = 0,
                                 style = Dict("margin-left" => "10px"),
@@ -196,9 +196,9 @@ system_tab = dcc_tab(
                         html_div([
                             html_button(
                                 dcc_link(
-                                    children = ["PowerSystems.jl DOCS"],
+                                    children = ["PowerSystems.jl Docs"],
                                     href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
-                                    target = "PowerSystems.jl DOCS",
+                                    target = "PowerSystems.jl Docs",
                                 ),
                                 id = "docs_button",
                                 n_clicks = 0,
@@ -254,9 +254,9 @@ component_tab = dcc_tab(
                         html_div([
                             html_button(
                                 dcc_link(
-                                    children = ["PowerSystems.jl DOCS"],
+                                    children = ["PowerSystems.jl Docs"],
                                     href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
-                                    target = "PowerSystems.jl DOCS",
+                                    target = "PowerSystems.jl Docs",
                                 ),
                                 id = "another_docs_button",
                                 n_clicks = 0,
@@ -281,7 +281,7 @@ component_tab = dcc_tab(
                 style = Dict("color" => "black"),
             ),
             html_br(),
-            html_button("PLOT SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
+            html_button("Plot SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
             html_hr(),
             html_div(
                 [
@@ -311,14 +311,14 @@ map_tab = dcc_tab(
                                 style = Dict("width" => "50%"),
                             ),
                             html_button(
-                                "LOAD SHAPEFILE",
+                                "Load Shapefile",
                                 id = "load_shp_button",
                                 n_clicks = 0,
                                 style = Dict("margin-left" => "10px"),
                             ),
                         ]),
                         html_br(),
-                        html_button("PLOT MAP", id = "plot_map_button", n_clicks = 0),
+                        html_button("Plot Map", id = "plot_map_button", n_clicks = 0),
                     ],
                     className = "column",
                 ),
@@ -599,7 +599,7 @@ callback!(
         )
         push!(traces, trace)
     end
-    layout = Layout(;
+    layout = PlotlyJS.Layout(;
         title = "$component_type SingleTimeSeries",
         xaxis_title = "Time",
         yaxis_title = "val",
