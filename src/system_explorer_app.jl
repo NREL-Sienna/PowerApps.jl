@@ -191,7 +191,7 @@ system_tab = dcc_tab(
                     [
                         html_div([
                             html_br(),
-                            html_img(src = "assets/logo.png", height = "250"),
+                            html_img(src = joinpath("assets", "logo.png"), height = "250"),
                         ],),
                         html_div([
                             html_button(
@@ -249,7 +249,7 @@ component_tab = dcc_tab(
                     [
                         html_div([
                             html_br(),
-                            html_img(src = "assets/logo.png", height = "75"),
+                            html_img(src = joinpath("assets", "logo.png"), height = "75"),
                         ],),
                         html_div([
                             html_button(
@@ -326,7 +326,7 @@ map_tab = dcc_tab(
                     [
                         html_div([
                             html_br(),
-                            html_img(src = "assets/logo.png", height = "75"),
+                            html_img(src = joinpath("assets", "logo.png"), height = "75"),
                         ],),
                         html_div([
                             html_button(
@@ -371,16 +371,21 @@ app.layout = html_div() do
             children = [
                 html_a(
                     id = "dashbio-logo",
-                    children = [html_img(src = "assets/NREL-logo-green-tag.png")],
+                    href = "https://www.nrel.gov/",
+                    target = "_blank",
+                    children = [
+                        html_img(src = joinpath("assets", "NREL-logo-green-tag.png")),
+                    ],
                 ),
                 html_h2("PowerSystemsExplorer.jl"),
                 html_a(
                     id = "gh-link",
                     children = ["View on GitHub"],
                     href = "https://github.com/NREL-SIIP/PowerSystemsApps.jl",
+                    target = "_blank",
                     style = Dict("color" => "#d6d6d6", "border" => "solid 1px #d6d6d6"),
                 ),
-                html_img(src = "assets/GitHub-Mark-Light-64px.png  "),
+                html_img(src = joinpath("assets", "GitHub-Mark-Light-64px.png")),
             ],
             className = "app-page-header",
         ),
@@ -603,7 +608,7 @@ callback!(
 end
 
 function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
-    plt[:overwrite_figure] && closeall()
+    plt[:overwrite_figure] && Plots.closeall()
     plt.o = PlotlyJS.plot()
     traces = PlotlyJS.GenericTrace[]
     for series_dict in Plots.plotly_series(plt)

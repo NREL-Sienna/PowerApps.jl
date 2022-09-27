@@ -18,7 +18,7 @@ This application allows users to browse PowerSystems components and time series 
 via Plotly Dash. Here's how to start it:
 
 ```
-$ julia --project src/system_viewer_app.jl
+$ julia --project src/system_explorer_app.jl
  Info: Listening on: 0.0.0.0:8050
 ```
 
@@ -40,7 +40,7 @@ Mac or Linux
 ```
 $ export SIIP_DEBUG=1
 # or
-$ SIIP_DEBUG=1 julia --project src/system_viewer_app.jl
+$ SIIP_DEBUG=1 julia --project src/system_explorer_app.jl
 ```
 
 Windows PowerShell

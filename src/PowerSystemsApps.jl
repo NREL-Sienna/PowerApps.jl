@@ -1,4 +1,4 @@
-module PowerSystemManager
+module PowerSystemsApps
 
 import Dates
 using Dash
