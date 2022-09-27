@@ -3,13 +3,13 @@ import TimeSeries
 import UUIDs
 using Dash
 using DataFrames
-using PlotlyJS
+import PlotlyJS
 import InfrastructureSystems
 using PowerSystems
-using PowerSystemsMaps
-using Plots
-plotlyjs(size = (NaN, NaN))
-using PowerSystemManager
+import PowerSystemsMaps
+import Plots
+Plots.plotlyjs(size = (NaN, NaN))
+using PowerSystemsApps
 
 const IS = InfrastructureSystems
 const PSY = PowerSystems
@@ -86,7 +86,7 @@ system_tab = dcc_tab(
                                 style = Dict("width" => "50%"),
                             ),
                             html_button(
-                                "Load system",
+                                "LOAD System",
                                 id = "load_button",
                                 n_clicks = 0,
                                 style = Dict("margin-left" => "10px"),
@@ -196,9 +196,9 @@ system_tab = dcc_tab(
                         html_div([
                             html_button(
                                 dcc_link(
-                                    children = ["PowerSystems.jl Docs"],
+                                    children = ["PowerSystems.jl DOCS"],
                                     href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
-                                    target = "PowerSystems.jl Docs",
+                                    target = "PowerSystems.jl DOCS",
                                 ),
                                 id = "docs_button",
                                 n_clicks = 0,
@@ -254,9 +254,9 @@ component_tab = dcc_tab(
                         html_div([
                             html_button(
                                 dcc_link(
-                                    children = ["PowerSystems.jl Docs"],
+                                    children = ["PowerSystems.jl DOCS"],
                                     href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
-                                    target = "PowerSystems.jl Docs",
+                                    target = "PowerSystems.jl DOCS",
                                 ),
                                 id = "another_docs_button",
                                 n_clicks = 0,
@@ -281,7 +281,7 @@ component_tab = dcc_tab(
                 style = Dict("color" => "black"),
             ),
             html_br(),
-            html_button("Plot SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
+            html_button("PLOT SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
             html_hr(),
             html_div(
                 [
@@ -311,14 +311,14 @@ map_tab = dcc_tab(
                                 style = Dict("width" => "50%"),
                             ),
                             html_button(
-                                "Load Shapefile",
+                                "LOAD SHAPEFILE",
                                 id = "load_shp_button",
                                 n_clicks = 0,
                                 style = Dict("margin-left" => "10px"),
                             ),
                         ]),
                         html_br(),
-                        html_button("Plot map", id = "plot_map_button", n_clicks = 0),
+                        html_button("PLOT MAP", id = "plot_map_button", n_clicks = 0),
                     ],
                     className = "column",
                 ),
@@ -373,11 +373,11 @@ app.layout = html_div() do
                     id = "dashbio-logo",
                     children = [html_img(src = "assets/NREL-logo-green-tag.png")],
                 ),
-                html_h2("PowerSystemManager.jl"),
+                html_h2("PowerSystemsExplorer.jl"),
                 html_a(
                     id = "gh-link",
                     children = ["View on GitHub"],
-                    href = "https://github.com/NREL-SIIP/PowerSystemManager.jl",
+                    href = "https://github.com/NREL-SIIP/PowerSystemsApps.jl",
                     style = Dict("color" => "#d6d6d6", "border" => "solid 1px #d6d6d6"),
                 ),
                 html_img(src = "assets/GitHub-Mark-Light-64px.png  "),
@@ -586,7 +586,7 @@ callback!(
         c_type = getproperty(PowerSystems, Symbol(component_type))
         component = get_component(c_type, get_system(), c_name)
         ta = get_time_series_array(ts_type, component, ts_name)
-        trace = scatter(;
+        trace = PlotlyJS.scatter(;
             x = TimeSeries.timestamp(ta),
             y = TimeSeries.values(ta),
             mode = "lines+markers",
@@ -635,7 +635,7 @@ callback!(
         shp_path = shp_txt
     else
         shp_path = joinpath(
-            pkgdir(PowerSystemManager),
+            pkgdir(PowerSystemsApps),
             "src",
             "assets",
             "world-administrative-boundaries",
@@ -666,8 +666,8 @@ callback!(
 
     if !isnothing(get_system())
         system = get_system()
-        g = make_graph(system, K = 0.01)
-        p = plot_net!(
+        g = PowerSystemsMaps.make_graph(system, K = 0.01)
+        p = PowerSystemsMaps.plot_net!(
             p,
             g,
             nodesize = 3.0,

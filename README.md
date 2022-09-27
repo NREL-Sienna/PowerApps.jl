@@ -1,13 +1,13 @@
-# PowerSystemManager.jl
+# PowerSystemsApps.jl
 
-The `PowerSystemManager.jl` package provides tools to view and manage systems created with
+The `PowerSystemsApps.jl` package provides tools to view and manage systems created with
 [PowerSystems.jl](https://github.com/NREL-SIIP/PowerSystems.jl)
 
 ## Usage
 
 ```
-$ git clone https://github.com/NREL-SIIP/PowerSystemManager.jl
-$ cd PowerSystemManager.jl
+$ git clone https://github.com/NREL-SIIP/PowerSystemsApps.jl
+$ cd PowerSystemsApps.jl
 $ julia --project
 julia> ]instantiate
 ```
@@ -50,6 +50,6 @@ $Env:SIIP_DEBUG = "1"
 
 ## License
 
-PowerSystemManager is released under a BSD [license](https://github.com/NREL/PowerSystemManager.jl/blob/master/LICENSE).
-PowerSystemManager has been developed as part of the Scalable Integrated Infrastructure Planning (SIIP)
+PowerSystemsApps is released under a BSD [license](https://github.com/NREL/PowerSystemsApps.jl/blob/master/LICENSE).
+PowerSystemsApps has been developed as part of the Scalable Integrated Infrastructure Planning (SIIP)
 initiative at the U.S. Department of Energy's National Renewable Energy Laboratory ([NREL](https://www.nrel.gov/)).

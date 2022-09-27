@@ -1,4 +1,4 @@
-name = "PowerSystemManager"
+name = "PowerSystemsApps"
 uuid = "e34cdab0-23c5-4ff6-ba51-717855faf142"
 authors = ["Daniel Thom <daniel.thom@nrel.gov>"]
 version = "0.1.0"
