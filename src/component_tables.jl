@@ -43,10 +43,10 @@ end
 function get_component_table_values(component::PowerSystems.Component)
     vals = DataStructures.OrderedDict{String,Any}("name" => get_name(component))
     t = typeof(component)
-    for (name, type) in zip(fieldnames(t), fieldtypes(t))
-        if type <: AbstractString || type <: Number || type <: Bool
-            vals[string(name)] = getproperty(component, name)
-        end
+
+    if hasfield(t, :bus)
+        vals["Bus"] = get_name(get_bus(component))
+        vals["Area"] = get_name(get_area(get_bus(component)))
     end
 
     vals["has_time_series"] = has_time_series(component)
