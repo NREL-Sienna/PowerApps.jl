@@ -1,7 +1,7 @@
 name = "PowerSystemsApps"
 uuid = "e34cdab0-23c5-4ff6-ba51-717855faf142"
 authors = ["Daniel Thom <daniel.thom@nrel.gov>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Dash = "1b08a953-4be3-4667-9a23-3db579824955"
