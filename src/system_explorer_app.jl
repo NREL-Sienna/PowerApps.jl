@@ -3,12 +3,12 @@ import TimeSeries
 import UUIDs
 using Dash
 using DataFrames
-import PlotlyJS
 import InfrastructureSystems
 using PowerSystems
 import PowerSystemsMaps
 import Plots
-Plots.plotlyjs(size = (NaN, NaN))
+import PlotlyJS
+#plotlyjs(size = (NaN, NaN))
 using PowerSystemsApps
 
 const IS = InfrastructureSystems
@@ -283,13 +283,14 @@ component_tab = dcc_tab(
             html_br(),
             html_button("Plot SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
             html_hr(),
-            html_div(
-                [
-                    dash_datatable(id = "deterministic_datatable"),
-                    html_div(id = "deterministic_datatable_container"),
-                ],
-                style = Dict("color" => "black"),
-            ),
+            #TODO: add support for plotting deterministic time series (and uncomment the below table)
+            # html_div(
+            #     [
+            #         dash_datatable(id = "deterministic_datatable"),
+            #         html_div(id = "deterministic_datatable_container"),
+            #     ],
+            #     style = Dict("color" => "black"),
+            # ),
             dcc_graph(id = "sts_plot"),
         ]),
     ],
@@ -363,7 +364,7 @@ map_tab = dcc_tab(
 # to retrieve the data from the backend process.
 g_data = SystemData()
 get_system() = get_system(g_data)
-app = dash()
+app = dash(assets_folder = joinpath(pkgdir(PowerSystemsApps), "src", "assets"))
 app.layout = html_div() do
     html_div([
         html_div(
@@ -688,8 +689,10 @@ callback!(
     Plots.backend_object(p)
 end
 
-if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
-    run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
-else
-    run_server(app, "0.0.0.0")
+function run_system_explorer()
+    if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
+        run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
+    else
+        run_server(app, "0.0.0.0")
+    end
 end

@@ -1,8 +1,8 @@
+#__precompile__(false)
 module PowerSystemsApps
 
-import Dates
-using Dash
-import JSON3
-using PowerSystems
+include("system_explorer_app.jl")
+
+export run_system_explorer
 
 end # module
