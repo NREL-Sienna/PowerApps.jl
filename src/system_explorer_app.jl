@@ -282,16 +282,30 @@ component_tab = dcc_tab(
             ),
             html_br(),
             html_button("Plot SingleTimeSeries", id = "plot_sts_button", n_clicks = 0),
-            html_hr(),
-            #TODO: add support for plotting deterministic time series (and uncomment the below table)
-            # html_div(
-            #     [
-            #         dash_datatable(id = "deterministic_datatable"),
-            #         html_div(id = "deterministic_datatable_container"),
-            #     ],
-            #     style = Dict("color" => "black"),
-            # ),
             dcc_graph(id = "sts_plot"),
+            html_hr(),
+            html_div(
+                [
+                    dash_datatable(id = "deterministic_datatable"),
+                    html_div(id = "deterministic_datatable_container"),
+                ],
+                style = Dict("color" => "black"),
+            ),
+            html_div([
+                dcc_input(
+                    id = "dts_step",
+                    value = 1,
+                    type = "number",
+                    style = Dict("width" => "5%"),
+                ),
+                html_button(
+                    "Plot Deterministic TimeSeries",
+                    id = "plot_dts_button",
+                    n_clicks = 0,
+                    style = Dict("margin-left" => "10px"),
+                ),
+            ]),
+            dcc_graph(id = "dts_plot"),
         ]),
     ],
 )
@@ -378,7 +392,7 @@ app.layout = html_div() do
                         html_img(src = joinpath("assets", "NREL-logo-green-tag.png")),
                     ],
                 ),
-                html_h2("PowerSystemsExplorer.jl"),
+                html_h2("PowerSystemsApps.jl"),
                 html_a(
                     id = "gh-link",
                     children = ["View on GitHub"],
@@ -566,6 +580,37 @@ callback!(
     return component_type, sts_table, deterministic_table
 end
 
+function plot_ts(row_data, row_indexes, component_type, step = 1)
+    traces = []
+    for i in row_indexes
+        row_index = i + 1  # julia is 1-based
+        row = row_data[row_index]
+        ts_name = row["name"]
+        c_name = row["component_name"]
+        ts_type = getproperty(PowerSystems, Symbol(row["type"]))
+        c_type = getproperty(PowerSystems, Symbol(component_type))
+        component = get_component(c_type, get_system(), c_name)
+        ts = get_time_series(ts_type, component, ts_name)
+        start_time =
+            ts isa AbstractDeterministic ? get_forecast_initial_times(get_system())[step] :
+            nothing
+        ta = get_time_series_array(component, ts, start_time)
+        trace = PlotlyJS.scatter(;
+            x = TimeSeries.timestamp(ta),
+            y = TimeSeries.values(ta),
+            mode = "lines+markers",
+            name = c_name,
+        )
+        push!(traces, trace)
+    end
+    layout = PlotlyJS.Layout(;
+        title = "$component_type TimeSeries",
+        xaxis_title = "Time",
+        yaxis_title = "val",
+    )
+    return PlotlyJS.plot([x for x in traces], layout)
+end
+
 callback!(
     app,
     Output("sts_plot", "figure"),
@@ -582,30 +627,28 @@ callback!(
        isempty(row_indexes)
         throw(PreventUpdate())
     end
-    traces = []
-    for i in row_indexes
-        row_index = i + 1  # julia is 1-based
-        row = row_data[row_index]
-        ts_name = row["name"]
-        ts_type = getproperty(PowerSystems, Symbol(row["type"]))
-        c_name = row["component_name"]
-        c_type = getproperty(PowerSystems, Symbol(component_type))
-        component = get_component(c_type, get_system(), c_name)
-        ta = get_time_series_array(ts_type, component, ts_name)
-        trace = PlotlyJS.scatter(;
-            x = TimeSeries.timestamp(ta),
-            y = TimeSeries.values(ta),
-            mode = "lines+markers",
-            name = c_name,
-        )
-        push!(traces, trace)
+    return plot_ts(row_data, row_indexes, component_type)
+end
+
+
+callback!(
+    app,
+    Output("dts_plot", "figure"),
+    Input("plot_dts_button", "n_clicks"),
+    Input("deterministic_datatable", "derived_viewport_selected_rows"),
+    Input("deterministic_datatable", "derived_viewport_data"),
+    Input("dts_step", "value"),
+    State("selected_component_type", "value"),
+) do n_clicks, row_indexes, row_data, step, component_type
+    ctx = callback_context()
+    if n_clicks < 1 ||
+       length(ctx.triggered) == 0 ||
+       ctx.triggered[1].prop_id != "plot_dts_button.n_clicks" ||
+       isnothing(row_indexes) ||
+       isempty(row_indexes)
+        throw(PreventUpdate())
     end
-    layout = PlotlyJS.Layout(;
-        title = "$component_type SingleTimeSeries",
-        xaxis_title = "Time",
-        yaxis_title = "val",
-    )
-    return PlotlyJS.plot([x for x in traces], layout)
+    return plot_ts(row_data, row_indexes, component_type, step)
 end
 
 function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
@@ -695,4 +738,8 @@ function run_system_explorer()
     else
         run_server(app, "0.0.0.0")
     end
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    run_system_explorer()
 end
