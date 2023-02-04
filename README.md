@@ -7,20 +7,18 @@ The `PowerSystemsApps.jl` package provides tools to view and manage systems crea
 
 ## Usage
 
-```
-$ git clone https://github.com/NREL-SIIP/PowerSystemsApps.jl
-$ cd PowerSystemsApps.jl
-$ julia --project
-julia> ]instantiate
+```julia
+julia> ]add PowerSystemsApps
 ```
 
-### PowerSystemsExplorer
+### PowerSystems Explorer
 
 This application allows users to browse PowerSystems components and time series data in a web UI
 via Plotly Dash. Here's how to start it:
 
-```
-$ julia --project src/system_explorer_app.jl
+```julia
+julia> using PowerSystemsApps
+julia> run_system_explorer()
  Info: Listening on: 0.0.0.0:8050
 ```
 
