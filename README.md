@@ -17,7 +17,7 @@ This application allows users to browse PowerSystems components and time series 
 via Plotly Dash. Here's how to start it:
 
 ```julia
-julia> using PowerApps.jl
+julia> using PowerApps
 julia> run_system_explorer()
 [ Info: Navigate browser to: http://0.0.0.0:8050
 [ Info: Listening on: 0.0.0.0:8050
