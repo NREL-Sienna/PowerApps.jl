@@ -1,4 +1,4 @@
-module PowerSystemsApps
+module PowerApps
 
 include("system_explorer_app.jl")
 

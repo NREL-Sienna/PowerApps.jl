@@ -1,18 +1,18 @@
-/* Table of contents –––––––––––––––––––––––––––––––––––––––––––––––––– 
-Taken from https://codepen.io/chriddyp/pen/bWLwgP.css 
-- Grid 
+/* Table of contents ––––––––––––––––––––––––––––––––––––––––––––––––––
+Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
+- Grid
 - Base Styles
- - Typography 
- - Links 
- - Buttons 
- - Forms 
- - Lists 
- - Code 
- - Tables 
- - Spacing 
- - Utilities 
- - Clearing 
- - Media Queries 
+ - Typography
+ - Links
+ - Buttons
+ - Forms
+ - Lists
+ - Code
+ - Tables
+ - Spacing
+ - Utilities
+ - Clearing
+ - Media Queries
  - Custom App CSS */
 
 
@@ -91,6 +91,9 @@ Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
    }
     .one-third.column {
         width: 30.6666666667%;
+   }
+   .one-quarter.column {
+        width: 22.333333333%;
    }
     .two-thirds.column {
         width: 65.3333333333%;

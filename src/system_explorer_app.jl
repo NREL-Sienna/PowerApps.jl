@@ -1,3 +1,6 @@
+# TODO:
+# 3. add node size options on maps of none(default), load, generation capacity,
+
 import Dates
 import TimeSeries
 import UUIDs
@@ -8,8 +11,7 @@ using PowerSystems
 import PowerSystemsMaps
 import Plots
 import PlotlyJS
-#plotlyjs(size = (NaN, NaN))
-using PowerSystemsApps
+using PowerApps
 
 const IS = InfrastructureSystems
 const PSY = PowerSystems
@@ -83,7 +85,7 @@ system_tab = dcc_tab(
                                 id = "system_text",
                                 value = "Enter the path of a system file",
                                 type = "text",
-                                style = Dict("width" => "50%"),
+                                style = Dict("width" => "50%", "margin-left" => "10px"),
                             ),
                             html_button(
                                 "Load System",
@@ -105,7 +107,7 @@ system_tab = dcc_tab(
                                                 style = Dict(
                                                     "width" => "100%",
                                                     "height" => 100,
-                                                    "margin-left" => "3%",
+                                                    "margin-left" => "10px",
                                                 ),
                                                 id = "load_description",
                                             ),
@@ -232,6 +234,7 @@ component_tab = dcc_tab(
             [
                 html_div(
                     [
+                        html_br(),
                         html_h1("Time Series View"),
                         html_h4("Selected component type:"),
                         html_div([
@@ -239,7 +242,7 @@ component_tab = dcc_tab(
                                 readOnly = true,
                                 value = "None",
                                 id = "selected_component_type",
-                                style = Dict("width" => "30%", "margin-left" => "3%"),
+                                style = Dict("width" => "30%", "margin-left" => "10px"),
                             ),
                         ],),
                     ],
@@ -317,13 +320,14 @@ map_tab = dcc_tab(
             [
                 html_div(
                     [
+                        html_br(),
                         html_h1("Map View"),
                         html_div([
                             dcc_input(
                                 id = "shp_text",
                                 value = "Enter the path of a shp file (optional)",
                                 type = "text",
-                                style = Dict("width" => "50%"),
+                                style = Dict("width" => "50%", "margin-left" => "10px"),
                             ),
                             html_button(
                                 "Load Shapefile",
@@ -333,9 +337,246 @@ map_tab = dcc_tab(
                             ),
                         ]),
                         html_br(),
-                        html_button("Plot Map", id = "plot_map_button", n_clicks = 0),
+                        html_div(
+                            [
+                                html_div(
+                                    [
+                                        html_h3("Bus Style"),
+                                        html_div(
+                                            [
+                                                html_h4(
+                                                    "Hover:",
+                                                    style = Dict("margin-left" => "5px"),
+                                                ),
+                                                dcc_radioitems(
+                                                    id = "bus_hover_radio",
+                                                    options = [
+                                                        (label = "name", value = "name"),
+                                                        (label = "full", value = "full"),
+                                                        (label = "none", value = "none"),
+                                                    ],
+                                                    value = "name",
+                                                    style = Dict(
+                                                        "margin-left" => "3%",
+                                                        "margin-top" => "15px",
+                                                    ),
+                                                    labelStyle = Dict(
+                                                        "display" => "inline-block",
+                                                    ),
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        html_div(
+                                            [
+                                                html_h4(
+                                                    "Color:",
+                                                    style = Dict("margin-left" => "5px"),
+                                                ),
+                                                dcc_radioitems(
+                                                    id = "bus_color_radio",
+                                                    options = [
+                                                        (label = "area", value = "Area"),
+                                                        (
+                                                            label = "load_zone",
+                                                            value = "LoadZone",
+                                                        ),
+                                                        (
+                                                            label = "bustype",
+                                                            value = "bustype",
+                                                        ),
+                                                        (
+                                                            label = "base_voltage",
+                                                            value = "base_voltage",
+                                                        ),
+                                                    ],
+                                                    value = "Area",
+                                                    style = Dict(
+                                                        "margin-left" => "3%",
+                                                        "margin-top" => "15px",
+                                                    ),
+                                                    labelStyle = Dict(
+                                                        "display" => "inline-block",
+                                                    ),
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        html_div(
+                                            [
+                                                html_div(
+                                                    [
+                                                        html_h4(
+                                                            "α:",
+                                                            style = Dict(
+                                                                "textAlign" => "right",
+                                                            ),
+                                                        ),
+                                                    ],
+                                                    className = "column",
+                                                ),
+                                                html_div(
+                                                    [
+                                                        html_br(),
+                                                        dcc_slider(
+                                                            id = "bus_alpha",
+                                                            min = 0.0,
+                                                            max = 1.0,
+                                                            step = 0.01,
+                                                            value = 0.9,
+                                                            dots = false,
+                                                        ),
+                                                    ],
+                                                    className = "column",
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        html_div(
+                                            [
+                                                html_h4(
+                                                    "Size:",
+                                                    style = Dict("margin-left" => "5px"),
+                                                ),
+                                                dcc_radioitems(
+                                                    id = "bus_size_scale",
+                                                    options = [
+                                                        (
+                                                            label = "Generator",
+                                                            value = "Generator",
+                                                        ),
+                                                        (
+                                                            label = "ThermalGen",
+                                                            value = "ThermalGen",
+                                                        ),
+                                                        (
+                                                            label = "RenewableGen",
+                                                            value = "RenewableGen",
+                                                        ),
+                                                        (
+                                                            label = "StaticLoad",
+                                                            value = "StaticLoad",
+                                                        ),
+                                                        (
+                                                            label = "ControllableLoad",
+                                                            value = "ControllableLoad",
+                                                        ),
+                                                        (
+                                                            label = "base_voltage",
+                                                            value = "base_voltage",
+                                                        ),
+                                                        (label = "none", value = "none"),
+                                                    ],
+                                                    value = "none",
+                                                    style = Dict(
+                                                        "margin-left" => "3%",
+                                                        "margin-top" => "15px",
+                                                    ),
+                                                    labelStyle = Dict(
+                                                        "display" => "inline-block",
+                                                    ),
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        dcc_slider(
+                                            id = "bus_size",
+                                            min = 0.0,
+                                            max = 15.0,
+                                            step = 0.1,
+                                            value = 2.0,
+                                            dots = false,
+                                            tooltip = Dict(
+                                                "always_visible" => true,
+                                                "placement" => "bottom",
+                                            ),
+                                        ),
+                                    ],
+                                    className = "two-thirds.column",
+                                ),
+                                html_div(
+                                    [
+                                        html_h3("Line Style"),
+                                        html_div(
+                                            [
+                                                html_h4(
+                                                    "Color:",
+                                                    style = Dict("margin-left" => "5px"),
+                                                ),
+                                                dcc_radioitems(
+                                                    id = "line_color_radio",
+                                                    options = [
+                                                        (label = "blue", value = "blue"),
+                                                        (label = "red", value = "red"),
+                                                        (label = "green", value = "green"),
+                                                        (label = "white", value = "white"),
+                                                    ],
+                                                    value = "blue",
+                                                    style = Dict(
+                                                        "margin-left" => "3%",
+                                                        "margin-top" => "15px",
+                                                    ),
+                                                    labelStyle = Dict(
+                                                        "display" => "inline-block",
+                                                    ),
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        html_div(
+                                            [
+                                                html_div(
+                                                    [
+                                                        html_h4(
+                                                            "α:",
+                                                            style = Dict(
+                                                                "textAlign" => "right",
+                                                            ),
+                                                        ),
+                                                    ],
+                                                    className = "column",
+                                                ),
+                                                html_div(
+                                                    [
+                                                        html_br(),
+                                                        dcc_slider(
+                                                            id = "line_alpha",
+                                                            min = 0.0,
+                                                            max = 1.0,
+                                                            step = 0.01,
+                                                            value = 0.9,
+                                                            dots = false,
+                                                        ),
+                                                    ],
+                                                    className = "column",
+                                                ),
+                                            ],
+                                            className = "row",
+                                        ),
+                                        html_h4(
+                                            "Width:",
+                                            style = Dict("margin-left" => "5px"),
+                                        ),
+                                        dcc_slider(
+                                            id = "line_size",
+                                            min = 0.0,
+                                            max = 5.0,
+                                            step = 0.1,
+                                            value = 1.0,
+                                            dots = false,
+                                            tooltip = Dict(
+                                                "always_visible" => true,
+                                                "placement" => "bottom",
+                                            ),
+                                        ),
+                                    ],
+                                    className = "column",
+                                ),
+                            ],
+                            className = "row",
+                        ),
                     ],
-                    className = "column",
+                    className = "one-quarter.column",
                 ),
                 html_div(
                     [
@@ -355,9 +596,16 @@ map_tab = dcc_tab(
                                 style = Dict("margin-top" => "10px"),
                             ),
                         ]),
+                        html_br(),
+                        html_button(
+                            "Plot Map",
+                            id = "plot_map_button",
+                            n_clicks = 0,
+                            style = Dict("margin-top" => "30px"),
+                        ),
                     ],
                     className = "column",
-                    style = Dict("textAlign" => "center"),
+                    style = Dict("textAlign" => "center", "width" => "25vw"),
                 ),
             ],
             className = "row",
@@ -378,7 +626,7 @@ map_tab = dcc_tab(
 # to retrieve the data from the backend process.
 g_data = SystemData()
 get_system() = get_system(g_data)
-app = dash(assets_folder = joinpath(pkgdir(PowerSystemsApps), "src", "assets"))
+app = dash(assets_folder = joinpath(pkgdir(PowerApps), "src", "assets"))
 app.layout = html_div() do
     html_div([
         html_div(
@@ -392,11 +640,11 @@ app.layout = html_div() do
                         html_img(src = joinpath("assets", "NREL-logo-green-tag.png")),
                     ],
                 ),
-                html_h2("PowerSystemsApps.jl"),
+                html_h2("PowerApps.jl"),
                 html_a(
                     id = "gh-link",
                     children = ["View on GitHub"],
-                    href = "https://github.com/NREL-SIIP/PowerSystemsApps.jl",
+                    href = "https://github.com/NREL-SIIP/PowerApps.jl",
                     target = "_blank",
                     style = Dict("color" => "#d6d6d6", "border" => "solid 1px #d6d6d6"),
                 ),
@@ -651,6 +899,8 @@ callback!(
     return plot_ts(row_data, row_indexes, component_type, step)
 end
 
+
+
 function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
     plt[:overwrite_figure] && Plots.closeall()
     plt.o = PlotlyJS.plot()
@@ -671,20 +921,49 @@ function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
     return plt.o
 end
 
+function name_components(comp, hover)
+    if hover == "name"
+        names = get_name.(comp)
+    elseif hover == "full"
+        names = string.(comp)
+    else
+        names = ["" for c in comp]
+    end
+    return names
+end
+
 callback!(
     app,
     Output("map_plot", "figure"),
     Input("plot_map_button", "n_clicks"),
     Input("load_shp_button", "n_clicks"),
+    Input("bus_hover_radio", "value"),
+    Input("bus_color_radio", "value"),
+    Input("bus_alpha", "value"),
+    Input("bus_size_scale", "value"),
+    Input("bus_size", "value"),
+    Input("line_color_radio", "value"),
+    Input("line_alpha", "value"),
+    Input("line_size", "value"),
     State("shp_text", "value"),
-) do n_clicks, n_shp_clicks, shp_txt
+) do n_clicks,
+n_shp_clicks,
+bus_hover,
+color_field,
+bus_alpha,
+bus_scale,
+bus_size,
+line_color,
+line_alpha,
+line_size,
+shp_txt
     n_clicks < 1 && throw(PreventUpdate())
 
     if n_shp_clicks > 0
         shp_path = shp_txt
     else
         shp_path = joinpath(
-            pkgdir(PowerSystemsApps),
+            pkgdir(PowerApps),
             "src",
             "assets",
             "world-administrative-boundaries",
@@ -715,16 +994,42 @@ callback!(
 
     if !isnothing(get_system())
         system = get_system()
-        g = PowerSystemsMaps.make_graph(system, K = 0.01)
+        c =
+            color_field ∈ ["Area", "LoadZone"] ?
+            IS.get_type_from_strings(PSY, color_field) : Symbol(color_field)
+
+        buses = get_components(Bus, system)
+        node_hover_str = name_components(buses, bus_hover)
+
+        if bus_scale == "base_voltage"
+            node_size = getfield.(buses, :base_voltage)
+        elseif bus_scale == "none"
+            node_size = ones(length(buses))
+        else
+            category = IS.get_type_from_strings(PSY, bus_scale)
+            node_size = zeros(length(buses))
+            for (ix, bus) in enumerate(buses)
+                injectors = get_components(
+                    x -> get_available(x) && get_bus(x) == bus,
+                    category,
+                    system,
+                )
+                isempty(injectors) && continue
+                node_size[ix] = sum(get_max_active_power.(injectors))
+            end
+        end
+
+        g = PowerSystemsMaps.make_graph(system, K = 0.01, color_by = c)
         p = PowerSystemsMaps.plot_net!(
             p,
             g,
-            nodesize = 3.0,
-            linecolor = "blue",
-            linewidth = 1.0,
+            nodesize = node_size .* bus_size,
+            nodehover = node_hover_str,
+            linecolor = line_color,
+            linewidth = line_size,
+            linealpha = line_alpha,
+            nodealpha = bus_alpha,
             lines = true,
-            #nodecolor = "red",
-            nodealpha = 1.0,
             shownodelegend = true,
         )
     end
@@ -732,11 +1037,12 @@ callback!(
     Plots.backend_object(p)
 end
 
-function run_system_explorer()
+function run_system_explorer(; port = 8050)
+    @info("Navigate browser to: http://0.0.0.0:$port")
     if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
-        run_server(app, "0.0.0.0", debug = true, dev_tools_hot_reload = true)
+        run_server(app, "0.0.0.0", port, debug = true, dev_tools_hot_reload = true)
     else
-        run_server(app, "0.0.0.0")
+        run_server(app, "0.0.0.0", port)
     end
 end
 

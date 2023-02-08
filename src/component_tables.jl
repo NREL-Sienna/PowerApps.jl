@@ -6,24 +6,24 @@ using DataStructures
 function make_component_table(
     ::Type{T},
     sys::System;
-    sort_column="Name"
+    sort_column = "Name",
 ) where {T<:PowerSystems.Component}
-    return _make_component_table(get_components(T, sys); sort_column=sort_column)
+    return _make_component_table(get_components(T, sys); sort_column = sort_column)
 end
 
 function make_component_table(
     filter_func::Function,
     ::Type{T},
     sys::System;
-    sort_column="Name"
+    sort_column = "Name",
 ) where {T<:PowerSystems.Component}
     return _make_component_table(
         get_components(filter_func, T, sys);
-        sort_column=sort_column
+        sort_column = sort_column,
     )
 end
 
-function _make_component_table(components; sort_column="Name")
+function _make_component_table(components; sort_column = "Name")
     table = Vector{DataStructures.OrderedDict{String,Any}}()
     for component in components
         push!(table, get_component_table_values(component))
@@ -34,7 +34,7 @@ function _make_component_table(components; sort_column="Name")
         if !in(sort_column, keys(table[1]))
             throw(ArgumentError("$sort_column is not a column in the table"))
         end
-        sort!(table, by=x -> x[sort_column])
+        sort!(table, by = x -> x[sort_column])
     end
 
     return table
@@ -228,8 +228,10 @@ function get_component_table_values(component::GenericBattery)
         "reactive_power" => get_reactive_power(component),
         "Max Input Active Power_limits" => get_input_active_power_limits(component).min,
         "Min Input Active Power_limits" => get_input_active_power_limits(component).max,
-        "Max Output Active Power_limits" => get_output_active_power_limits(component).min,
-        "Min Output Active Power_limits" => get_output_active_power_limits(component).max,
+        "Max Output Active Power_limits" =>
+            get_output_active_power_limits(component).min,
+        "Min Output Active Power_limits" =>
+            get_output_active_power_limits(component).max,
         "Max Reactive Power_limits" => get_reactive_power_min_limit(component),
         "Min Reactive Power_limits" => get_reactive_power_max_limit(component),
         "Efficiency In" => get_efficiency(component).in,
@@ -252,7 +254,7 @@ function get_component_table_values(component::ACBranch)
         "x" => get_x(component),
         "b" => get_b(component),
         "rate" => get_rate(component),
-        "angle_limits" => get_angle_limits(component)
+        "angle_limits" => get_angle_limits(component),
     )
 end
 
