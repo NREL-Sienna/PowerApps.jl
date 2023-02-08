@@ -1,6 +1,6 @@
-# PowerSystemsApps.jl
+# PowerApps.jl
 
-The `PowerSystemsApps.jl` package provides tools to view and manage systems created with
+The `PowerApps.jl` package provides tools to view and manage systems created with
 [PowerSystems.jl](https://github.com/NREL-SIIP/PowerSystems.jl) in a web app interface like the one shown here:
 
 ![img](image.png)
@@ -8,7 +8,7 @@ The `PowerSystemsApps.jl` package provides tools to view and manage systems crea
 ## Usage
 
 ```julia
-julia> ]add PowerSystemsApps
+julia> ]add PowerApps
 ```
 
 ### PowerSystems Explorer
@@ -17,18 +17,23 @@ This application allows users to browse PowerSystems components and time series 
 via Plotly Dash. Here's how to start it:
 
 ```julia
-julia> using PowerSystemsApps
+julia> using PowerApps.jl
 julia> run_system_explorer()
- Info: Listening on: 0.0.0.0:8050
+[ Info: Navigate browser to: http://0.0.0.0:8050
+[ Info: Listening on: 0.0.0.0:8050
 ```
 
 Open your browser to the IP address and port listed. In this case: `http://0.0.0.0:8050`.
+The System Explorer app will appear with three tabs:
 
-Next, enter a path to a raw data file or serialized JSON and load the system. Afterwards,
-you can sort and filter component data.
-
-Once you select one or more components you can select the `Components` tab and then plot
-time series data.
+- System: enter a path to a raw data file or serialized JSON and load the system.
+Component data can be explored by type, and can be sorted and filtered.
+- Time Series: time series data for components selected on the "System" tab can be viewed
+and visualized
+- Maps: a shapefile can be loaded (optional), and nodes (`Bus`) and `Branch`s can be plotted.
+Several configuration options provide opportunities to visualize the geo-spatial data.
+*note: geospatial layouts are significantly more useful when "latitude" and "longitude" is defined
+in the `Bus.ext` fields. Without bus coordinates, an automatic layout will be applied*
 
 ## Developers
 
@@ -50,6 +55,6 @@ $Env:SIIP_DEBUG = "1"
 
 ## License
 
-PowerSystemsApps is released under a BSD [license](https://github.com/NREL/PowerSystemsApps.jl/blob/master/LICENSE).
-PowerSystemsApps has been developed as part of the Scalable Integrated Infrastructure Planning (SIIP)
+PowerApps.jl is released under a BSD [license](https://github.com/NREL/PowerApps.jl/blob/master/LICENSE).
+PowerApps.jl has been developed as part of the Scalable Integrated Infrastructure Planning (SIIP)
 initiative at the U.S. Department of Energy's National Renewable Energy Laboratory ([NREL](https://www.nrel.gov/)).
