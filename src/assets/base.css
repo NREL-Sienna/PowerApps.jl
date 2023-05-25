@@ -218,12 +218,12 @@ Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
   }
   /* Links –––––––––––––––––––––––––––––––––––––––––––––––––– */
   a {
-    color: #1EAEDB;
+    color: #EB932F;
     text-decoration: underline;
     cursor: pointer;
   }
   a:hover {
-    color: #0FA0CE;
+    color: #EB932F;
   }
   /* Buttons –––––––––––––––––––––––––––––––––––––––––––––––––– */
   .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
@@ -252,13 +252,13 @@ Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
   }
   .button.button-primary, button.button-primary, input[type="submit"].button-primary, input[type="reset"].button-primary, input[type="button"].button-primary {
     color: #FFF;
-    background-color: #33C3F0;
-    border-color: #33C3F0;
+    background-color: #EB932F;
+    border-color: #EB932F;
   }
   .button.button-primary:hover, button.button-primary:hover, input[type="submit"].button-primary:hover, input[type="reset"].button-primary:hover, input[type="button"].button-primary:hover, .button.button-primary:focus, button.button-primary:focus, input[type="submit"].button-primary:focus, input[type="reset"].button-primary:focus, input[type="button"].button-primary:focus {
     color: #FFF;
-    background-color: #1EAEDB;
-    border-color: #1EAEDB;
+    background-color: #EB932F;
+    border-color: #EB932F;
   }
   /* Forms –––––––––––––––––––––––––––––––––––––––––––––––––– */
   input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {
@@ -286,7 +286,7 @@ Taken from https://codepen.io/chriddyp/pen/bWLwgP.css
     padding-bottom: 6px;
   }
   input[type="email"]:focus, input[type="number"]:focus, input[type="search"]:focus, input[type="text"]:focus, input[type="tel"]:focus, input[type="url"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
-    border: 1px solid #33C3F0;
+    border: 1px solid #EB932F;
     outline: 0;
   }
   label, legend {

@@ -21,7 +21,7 @@ include("utils.jl")
 include("component_tables.jl")
 
 mutable struct SystemData
-    system::Union{Nothing,System}
+    system::Union{Nothing, System}
 end
 
 SystemData() = SystemData(nothing)
@@ -199,7 +199,7 @@ system_tab = dcc_tab(
                             html_button(
                                 dcc_link(
                                     children = ["PowerSystems.jl Docs"],
-                                    href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
+                                    href = "https://nrel-Sienna.github.io/PowerSystems.jl/stable/",
                                     target = "PowerSystems.jl Docs",
                                 ),
                                 id = "docs_button",
@@ -258,7 +258,7 @@ component_tab = dcc_tab(
                             html_button(
                                 dcc_link(
                                     children = ["PowerSystems.jl Docs"],
-                                    href = "https://nrel-siip.github.io/PowerSystems.jl/stable/",
+                                    href = "https://nrel-Sienna.github.io/PowerSystems.jl/stable/",
                                     target = "PowerSystems.jl Docs",
                                 ),
                                 id = "another_docs_button",
@@ -588,7 +588,7 @@ map_tab = dcc_tab(
                             html_button(
                                 dcc_link(
                                     children = ["PowerSystemsMaps.jl"],
-                                    href = "https://github.com/nrel-siip/powersystemsmaps.jl",
+                                    href = "https://github.com/nrel-Sienna/powersystemsmaps.jl",
                                     target = "PowerSystemsMaps.jl",
                                 ),
                                 id = "maps_docs_button",
@@ -644,7 +644,7 @@ app.layout = html_div() do
                 html_a(
                     id = "gh-link",
                     children = ["View on GitHub"],
-                    href = "https://github.com/NREL-SIIP/PowerApps.jl",
+                    href = "https://github.com/NREL-Sienna/PowerApps.jl",
                     target = "_blank",
                     style = Dict("color" => "#d6d6d6", "border" => "solid 1px #d6d6d6"),
                 ),
@@ -678,7 +678,6 @@ app.layout = html_div() do
             ),
         ]),
     ])
-
 end
 
 callback!(
@@ -878,7 +877,6 @@ callback!(
     return plot_ts(row_data, row_indexes, component_type)
 end
 
-
 callback!(
     app,
     Output("dts_plot", "figure"),
@@ -898,8 +896,6 @@ callback!(
     end
     return plot_ts(row_data, row_indexes, component_type, step)
 end
-
-
 
 function plotlyjs_syncplot(plt::Plots.Plot{Plots.PlotlyJSBackend})
     plt[:overwrite_figure] && Plots.closeall()
@@ -1031,6 +1027,7 @@ shp_txt
             nodealpha = bus_alpha,
             lines = true,
             shownodelegend = true,
+            legend_font_color = "white",
         )
     end
     plotlyjs_syncplot(p)
@@ -1039,7 +1036,7 @@ end
 
 function run_system_explorer(; port = 8050)
     @info("Navigate browser to: http://0.0.0.0:$port")
-    if !isnothing(get(ENV, "SIIP_DEBUG", nothing))
+    if !isnothing(get(ENV, "SIENNA_DEBUG", nothing))
         run_server(app, "0.0.0.0", port, debug = true, dev_tools_hot_reload = true)
     else
         run_server(app, "0.0.0.0", port)

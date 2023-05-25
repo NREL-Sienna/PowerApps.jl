@@ -6,7 +6,7 @@
     background-color: #1E1E1E;
     padding: 60px 24px;
     border-bottom: 0px !important;
-    /*border-bottom: 1px solid #0076bd;*/
+    /*border-bottom: 1px solid #EB932F;*/
 }
 
 .custom-tab {
@@ -28,7 +28,7 @@
 }
 .custom-tab--selected {
     color: #d6d6d6 !important;
-    border-top: 6px solid #0076bd !important;
+    border-top: 6px solid #EB932F !important;
     border-bottom: 0px !important;
 }
 
@@ -50,7 +50,7 @@
     top: 0px;
     font-family: "Open Sans";
     letter-spacing: -.1rem;
-    border-bottom: 2px solid #0076bd !important;
+    border-bottom: 2px solid #EB932F !important;
 }
 
 #app-page-header > a > img {

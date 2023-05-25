@@ -1,9 +1,11 @@
 # PowerApps.jl
 
 The `PowerApps.jl` package provides tools to view and manage systems created with
-[PowerSystems.jl](https://github.com/NREL-SIIP/PowerSystems.jl) in a web app interface like the one shown here:
+[PowerSystems.jl](https://github.com/NREL-Sienna/PowerSystems.jl) in a web app interface like the one shown here:
 
-![img](image.png)
+![img](sys.png)
+![img](ts.png)
+![img](map.png)
 
 ## Usage
 
@@ -39,22 +41,22 @@ in the `Bus.ext` fields. Without bus coordinates, an automatic layout will be ap
 
 Consult https://dash.plotly.com/julia for help extending the UI.
 
-Set the environment variable `SIIP_DEBUG` to enable hot-reloading of the UI.
+Set the environment variable `SIENNA_DEBUG` to enable hot-reloading of the UI.
 
 Mac or Linux
 ```
-$ export SIIP_DEBUG=1
+$ export SIENNA_DEBUG=1
 # or
-$ SIIP_DEBUG=1 julia --project src/system_explorer_app.jl
+$ SIENNA_DEBUG=1 julia --project src/system_explorer_app.jl
 ```
 
 Windows PowerShell
 ```
-$Env:SIIP_DEBUG = "1"
+$Env:SIENNA_DEBUG = "1"
 ```
 
 ## License
 
 PowerApps.jl is released under a BSD [license](https://github.com/NREL/PowerApps.jl/blob/master/LICENSE).
-PowerApps.jl has been developed as part of the Scalable Integrated Infrastructure Planning (SIIP)
-initiative at the U.S. Department of Energy's National Renewable Energy Laboratory ([NREL](https://www.nrel.gov/)).
+PowerApps.jl has been developed as part of the Sienna
+ecosystem at the U.S. Department of Energy's National Renewable Energy Laboratory ([NREL](https://www.nrel.gov/)).
