@@ -1,6 +1,3 @@
-# TODO:
-# 3. add node size options on maps of none(default), load, generation capacity,
-
 import Dates
 import TimeSeries
 import UUIDs
@@ -11,7 +8,6 @@ using PowerSystems
 import PowerSystemsMaps
 import Plots
 import PlotlyJS
-using PowerApps
 
 const IS = InfrastructureSystems
 const PSY = PowerSystems
